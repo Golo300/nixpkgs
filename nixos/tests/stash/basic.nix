@@ -1,21 +1,30 @@
-import ../make-test-python.nix ({ pkgs, ... }: {
+import ../make-test-python.nix (
+  { pkgs, ... }:
+  {
     name = "basic test for stash app";
 
     nodes = {
-      machine1 = { config, pkgs, ... }: {
-        services.stash.enable = true;
-      };
+      server =
+        { config, pkgs, ... }:
+        {
+          services.stash = {
+            enable = true;
+            port = 1234;
+          };
+        };
 
-      machine2 = { config, pkgs, ... }: {
-      };
+      machine2 = { config, pkgs, ... }: { };
     };
 
     testScript = ''
       start_all()
 
-      machine1.succeed("echo this runs on machine1")
-      machine2.succeed("echo this runs on machine2")
-      ...
-    '';
-  })
+      # wait for service
+      server.wait_for_unit("stash")
+      server.succeed("systemctl is-active stash")
 
+      # test port
+      server.wait_for_open_port(1234)
+    '';
+  }
+)
