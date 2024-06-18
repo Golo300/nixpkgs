@@ -14,7 +14,7 @@ in
     services.stash = {
 
       enable = mkOption {
-        type = types.bool;
+        type = lib.types.bool;
         default = false;
         description = "a stash instance";
       };
@@ -67,10 +67,6 @@ in
         Restart = "always";
         RestartSec = "5s";
       };
-
-      #install = {
-      #  wantedBy = [ "multi-user.target" ];
-      #};
     };
    };
 }

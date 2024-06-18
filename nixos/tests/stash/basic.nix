@@ -12,8 +12,6 @@ import ../make-test-python.nix (
             port = 1234;
           };
         };
-
-      machine2 = { config, pkgs, ... }: { };
     };
 
     testScript = ''
