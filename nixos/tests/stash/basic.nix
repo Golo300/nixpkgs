@@ -22,7 +22,10 @@ import ../make-test-python.nix (
       server.succeed("systemctl is-active stash")
 
       # test port
-      server.wait_for_open_port(1234)
+      server.wait_for_open_port(1234, timeout=60)
+
+      # test http
+      machine.wait_until_succeeds("curl http://localhost:1234", timeout=60)
     '';
   }
 )
