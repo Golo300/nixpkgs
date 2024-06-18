@@ -49,13 +49,15 @@ in
       };
     };
   };
-   config = mkIf cfg.enable {
+  config = mkIf cfg.enable {
     systemd.services.stash = {
       description = "Stash Service";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
+        user = "stash";
+        group = "stash";
         ExecStart = ''
           ${pkgs.stash}/bin/stash \
             ${optionalString (cfg.configFile != "") "-c ${cfg.configFile}"} \
@@ -68,5 +70,11 @@ in
         RestartSec = "5s";
       };
     };
-   };
+    users.users.stash = {
+      #home = "${cfg.configFile}";
+      group = "stash";
+      isSystemUser = true;
+    };
+    users.groups.stash.members = [ "stash" ];
+  };
 }
